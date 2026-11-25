@@ -64,3 +64,12 @@ def test_no_missing_values(feats):
 def test_dates_are_sorted_and_unique(feats):
     assert feats.dteday.is_monotonic_increasing
     assert feats.dteday.is_unique
+
+
+def test_cnt_roll_3_uses_only_earlier_days(feats):
+    """cnt_roll_3 on 2012-06-15 is the mean of cnt on 06-12, 06-13, 06-14
+    (4972, 7421, 7363), taken by hand from data/raw/bike_daily.csv.
+    It must not include 06-15 itself."""
+    row = feats.loc[feats.dteday == "2012-06-15"].iloc[0]
+    expected = (4972 + 7421 + 7363) / 3
+    assert abs(row.cnt_roll_3 - expected) < 1e-9

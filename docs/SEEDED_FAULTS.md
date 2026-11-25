@@ -150,3 +150,15 @@ labels are no longer sorted. Agent's actual diff against the starter:
 
 I restored the starter's exact line with `git checkout -- src/features.py`.
 The change is cosmetic. After restoring, `make test` showed 16 passed.
+
+### Bash copy blind spot
+
+**Action:** Tested whether the PostToolUse hook detects copying a file into data/raw/ using Bash.
+
+**Command used:** cp /tmp/hook_blindspot_test.txt data/raw/hook_blindspot_test.txt
+
+**Observed result:** The copy succeeded. The copied file was verified using ls -l and showed a 36-byte file. No hook warning or automatic test output appeared after the Bash copy.
+
+**Why it was missed:** The PostToolUse hook did not detect this file operation performed through Bash cp.
+
+**What would have caught it:** A filesystem-level monitoring mechanism, a pre-commit hook checking for unexpected changes in data/raw/, or a CI check enforcing that raw data files cannot be added or modified unexpectedly.

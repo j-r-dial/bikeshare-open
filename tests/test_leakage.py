@@ -73,3 +73,11 @@ def test_cnt_roll_3_uses_only_earlier_days(feats):
     row = feats.loc[feats.dteday == "2012-06-15"].iloc[0]
     expected = (4972 + 7421 + 7363) / 3
     assert abs(row.cnt_roll_3 - expected) < 1e-9
+
+
+def test_encode_weather_rejects_unknown_label():
+    """An unseen weather label must raise, not silently become NaN and
+    get dropped downstream (the 'BAD weather days vanish' bug)."""
+    from src.features import encode_weather
+    with pytest.raises(ValueError):
+        encode_weather(pd.Series(["GOOD", "FOGGY"]))

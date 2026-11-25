@@ -84,3 +84,69 @@ exit code: 2
 ```
 
 **Agent repair:** agent did not finish repair, time out error. restored line with 'git checkout --src/features.py
+
+
+## Fault 3: `raise` removed from `encode_weather`
+
+**Seeded fault.** In `src/features.py`:
+
+```diff
+-        raise ValueError(f"unmapped weather labels: {sorted(unknown)}")
++        pass
+```
+
+**Who made the edit:** me, by hand. The real data contains only known weather
+labels, so with this fault in place the starter's suite stays green. I added
+`test_encode_weather_rejects_unknown_label` to `tests/test_leakage.py`, which
+feeds `encode_weather` an unseen label and expects a `ValueError`.
+
+**Red test output (`make test`):**
+
+```
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_leakage.py:82: Failed
+=========================== short test summary info ============================
+FAILED tests/test_leakage.py::test_encode_weather_rejects_unknown_label - Fai...
+1 failed, 15 passed in 2.82s
+make: *** [test] Error 1
+```
+
+**Hook stderr (script run directly, exit code 2):**
+
+```
+Leakage tests failed after editing /Users/juliadial/Downloads/bikeshare-open/src/features.py:
+........F                                                                [100%]
+=================================== FAILURES ===================================
+__________________ test_encode_weather_rejects_unknown_label ___________________
+
+    def test_encode_weather_rejects_unknown_label():
+        """An unseen weather label must raise, not silently become NaN and
+        get dropped downstream (the 'BAD weather days vanish' bug)."""
+        from src.features import encode_weather
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_leakage.py:82: Failed
+=========================== short test summary info ============================
+FAILED tests/test_leakage.py::test_encode_weather_rejects_unknown_label - Fai...
+1 failed, 8 passed in 1.03s
+exit code: 2
+```
+
+**Agent repair:** completed with no intervention from me, in 3 tool calls
+(1 file read, 1 edit to `src/features.py`, 1 shell command running
+`make test`), about 16 minutes in total (Claude Code reported 16m 9s) on
+bikeshare-coder. Final `make test`: all tests passed.
+
+The repair restored the `raise ValueError` but reworded the message, and the
+labels are no longer sorted. Agent's actual diff against the starter:
+
+```diff
+-        raise ValueError(f"unmapped weather labels: {sorted(unknown)}")
++        raise ValueError(f"Unknown weather label(s): {unknown}")
+```
+
+I restored the starter's exact line with `git checkout -- src/features.py`.
+The change is cosmetic. After restoring, `make test` showed 16 passed.

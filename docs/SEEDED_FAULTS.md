@@ -128,7 +128,7 @@ FAILED tests/test_leakage.py::test_rolling_mean_excludes_today - assert ...
 1 failed, 7 passed in 1.14s
 ```
 
-**Agent repair:** In the verification rerun, the repair restored `.shift(1)` in one edit. The rolling mean again uses the seven calendar days before the prediction date. After the repair, the hook script exited with code 0.
+**Agent repair:** In the verification rerun, the repair restored `.shift(1)` in one turn. The rolling mean again uses the seven calendar days before the prediction date. After the repair, the hook script exited with code 0.
 
 ```python
     out["cnt_roll_7"] = out[TARGET].shift(1).rolling(LAG_WARMUP).mean()

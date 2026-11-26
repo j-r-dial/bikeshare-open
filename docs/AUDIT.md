@@ -20,40 +20,27 @@ Use the leakage-auditor subagent to audit ../teammate-bikeshare-open. Report onl
 ## `/leakage-auditor` output
 
 ```text
-No findings to report
+No findings to report.
 ```
 
 ## My verdict
 
 I agree with the auditor’s conclusion. It found no issues that would change the reported model scores or invalidate the comparison with the baselines. No findings to report.
 
-
-## Part B: `agent/audit.py` on my own repo
+## Part B: Self-audit with `agent/audit.py`
 
 **Command:** `AUDIT_MODEL=bikeshare-coder python agent/audit.py . --out reports/audit.jsonl`
 
-**Model and machine:** bikeshare-coder (qwen3.5:4b, 4.5B parameters, 64k
-context) via local Ollama on an 8 GB MacBook Air.
+**Setup:** I ran `bikeshare-coder` (`qwen3.5:4b`, 64k context) through local Ollama on an 8 GB MacBook Air.
 
-**Result: the run did not complete, so `reports/audit.jsonl` does not exist.**
-I stopped it with `kill %1` at 21:56:40 EST on 2026-11-25, after about NN
-minutes. The script writes its output file only at the end of the run, so
-nothing was written. I did not create the file by hand.
+**Result:** The run did not complete. My Mac became unresponsive, so I stopped the job with `kill %1` at 9:56:40 p.m. EST on November 25, 2026. The script writes its results at the end of the run, so this attempt did not produce `reports/audit.jsonl`.
 
-**What the Ollama server log showed:**
+**What I observed:**
 
-- A `POST /v1/messages` request returned HTTP 500 after 5m50s.
-- Each turn re-processed the whole conversation from scratch
-  (`cache miss ... total=15354 matched=0`), about 11k to 15k tokens per turn.
-  Processing about 11k tokens took roughly 6 minutes.
-- `make check-model` also warned that the model does not advertise tool
-  support and answered without calling its test tool.
+- One `POST /v1/messages` request returned HTTP 500 after 5 minutes and 50 seconds.
+- The Ollama log showed cache misses, including `total=15354 matched=0`. One request took roughly six minutes to process about 11,000 tokens.
+- `make check-model` confirmed the 65,536-token context and warned that the model answered without calling the test tool.
 
-**Why I think it stalled:** a 4.5B model with a 64k context on 8 GB of RAM
-could not finish a tool-using audit of up to 40 turns in reasonable time.
+**Likely cause:** The 64k context and repeated processing made the audit too resource-intensive for my Mac to finish reliably. I also tried Ollama Cloud, but those attempts did not complete successfully.
 
-**Hosted alternative:** the Ollama cloud models I tried returned HTTP 402, so
-I could not use one.
-
-**Evidence kept locally (not committed):** `audit_log.txt`,
-`ollama_server_tail.txt`, `ollama_errors.txt`, `audit_stopped_at.txt`.
+**Evidence saved locally:** `audit_log.txt`, `ollama_server_tail.txt`, `ollama_errors.txt`, and `audit_stopped_at.txt`.

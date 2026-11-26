@@ -183,10 +183,7 @@ FAILED tests/test_leakage.py::test_encode_weather_rejects_unknown_label - Fai...
 exit code: 2
 ```
 
-**Agent repair:** completed with no intervention from me, in 3 tool calls
-(1 file read, 1 edit to `src/features.py`, 1 shell command running
-`make test`), about 16 minutes in total (Claude Code reported 16m 9s) on
-bikeshare-coder. Final `make test`: all tests passed.
+**Agent repair.** Claude Code completed the repair in one turn after one repair prompt. Within that turn it read a file, edited `src/features.py`, and ran `make test`. Claude Code reported that all tests passed. The turn took 16m 9s.
 
 The repair restored the `raise ValueError` but reworded the message, and the
 labels are no longer sorted. Agent's actual diff against the starter:

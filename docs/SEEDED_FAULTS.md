@@ -87,7 +87,7 @@ exit code: 2
 
 ```python
     out["cnt_roll_7"] = out[TARGET].shift(1).rolling(LAG_WARMUP).mean()
-
+```
 
 ## Fault 3: `raise` removed from `encode_weather`
 

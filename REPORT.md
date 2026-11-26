@@ -25,3 +25,7 @@ The original HistGradientBoostingRegressor performed substantially worse than Ri
 Instead, I tested a trend-plus-residual approach. I fit a linear time trend using only the training period, trained HGB on the residuals after subtracting that trend, and added the projected trend back to HGB's predictions. This achieved validation R² = 0.7588 and MAE = 653.6, outperforming both original HGB and Ridge. A trend-only model achieved R² = 0.1771 and MAE = 1,330.3, suggesting that HGB contributes predictive value beyond the linear trend.
 
 I consider this approach defensible as a hybrid model because the trend is estimated from historical training data and projected forward, without using validation or test targets to fit it. However, it is not a simple target transformation or a plain HGB model: it explicitly introduces a linear time-trend component. After selecting the approach using validation, I evaluated the test set once, at the end, achieving R² = 0.6019 and MAE = 810.2. I did not tune the model based on test results.
+
+### Exercise 5: ridge vs persistence
+
+I would deploy the persistence baseline if the main goal is to minimize the average daily forecast error in rides. On the test set, ridge had the higher R² (0.5800 versus 0.5099), a gain of 0.0701. Persistence had the lower MAE (840.1 versus 946.2 rides), so its forecasts missed by 106.1 fewer rides per day on average. Since MAE directly measures how far the forecast is from the daily ride count, I would use yesterday’s count as the forecast.

@@ -35,9 +35,13 @@ Model used for agent repairs: bikeshare-coder (qwen3.5:4b via local Ollama, 64k 
 
 ## Fault 1: forbidden column reaches the feature set (`casual`)
 
-**Seeded fault.** Removed the forbidden-column filter from `feature_columns()`
-in `src/features.py` (lines 83-85), so `casual` was included in the feature
-columns.
+**Seeded fault.** In `src/features.py`, Claude exempted only `casual` from the `FORBIDDEN` filter in `feature_columns()`:
+
+```diff
+-    return [c for c in numeric if c not in FORBIDDEN]
++    # Bug: missing casual from FORBIDDEN, so it leaks into features
++    return [c for c in numeric if c not in FORBIDDEN - {"casual"}]
+```
 
 **Who made the edit:** the agent (Claude Code), so the PostToolUse hook fired.
 

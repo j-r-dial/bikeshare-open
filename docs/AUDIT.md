@@ -25,9 +25,9 @@ No findings to report.
 
 ## My verdict
 
-I agree with the auditor’s conclusion. It found no issues that would change the reported model scores or invalidate the comparison with the baselines. No findings to report.
+In my teammate’s commit `f9dc6c0`, all 19 tests passed and `make all` reproduced the committed metrics exactly so no discrepancy in the reported scores. So, I agree with the auditor’s conclusion. It found no issues that would change the reported model scores or invalidate the comparison with the baselines. No findings to report.
 
-## Part B: Self-audit with `agent/audit.py`
+## Self-audit with `agent/audit.py`
 
 **Command:** `AUDIT_MODEL=bikeshare-coder python agent/audit.py . --out reports/audit.jsonl`
 

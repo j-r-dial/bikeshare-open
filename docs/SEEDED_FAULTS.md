@@ -1,3 +1,34 @@
+# Exercise 1: `cnt_roll_3` test evidence
+
+The test in commit `98b14f8` checks `cnt_roll_3` on 2012-06-15 against the mean of the counts on June 12, 13, and 14. Those counts are 4972, 7421, and 7363, so the expected value is `(4972 + 7421 + 7363) / 3`. The failing output below comes from a rerun of the test-only commit. The feature was added in the following commit, `e2b55da`.
+
+**Red test output (`make test` with `PYTEST_ADDOPTS=--tb=short`)**
+
+```text
+python -m pytest tests/ -q
+...........F...                                                          [100%]
+=================================== FAILURES ===================================
+____________________ test_cnt_roll_3_uses_only_earlier_days ____________________
+tests/test_leakage.py:75: in test_cnt_roll_3_uses_only_earlier_days
+    assert abs(row.cnt_roll_3 - expected) < 1e-9
+               ^^^^^^^^^^^^^^
+../fault2-venv/lib/python3.12/site-packages/pandas/core/generic.py:6194: in __getattr__
+    return object.__getattribute__(self, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'Series' object has no attribute 'cnt_roll_3'. Did you mean: 'cnt_roll_7'?
+=========================== short test summary info ============================
+FAILED tests/test_leakage.py::test_cnt_roll_3_uses_only_earlier_days - Attrib...
+1 failed, 14 passed in 1.39s
+make: *** [Makefile:16: test] Error 1
+```
+
+**Green test output (`make test` at `e7838e5`)**
+
+```text
+python -m pytest tests/ -q
+................                                                         [100%]
+16 passed in 1.27s
+```
 # Exercise 2: Seeded Faults
 
 Model used for agent repairs: bikeshare-coder (qwen3.5:4b via local Ollama, 64k context).

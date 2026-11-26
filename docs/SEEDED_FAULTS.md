@@ -85,9 +85,7 @@ All 8 tests in `test_leakage.py` passed afterward.
 
 Without the shift, the rolling mean includes the same day's count.
 
-**Who made the edit:** me, by hand with sed. The hook only fires on the
-agent's edits, so I ran `.claude/hooks/check_leakage.sh` directly with a
-PostToolUse-style JSON payload for `src/features.py`.
+**Who made the edit.** Claude Code removed `.shift(1)` in the recorded session, which triggered the automatic PostToolUse hook. I also seeded the same fault by hand for the separate `make test` and direct hook runs below.
 
 **Red test output (`make test`):**
 
@@ -116,6 +114,18 @@ tests/test_leakage.py:57: AssertionError
 FAILED tests/test_leakage.py::test_rolling_mean_excludes_today - assert np.fl...
 1 failed, 7 passed in 0.86s
 exit code: 2
+```
+**Automatic hook output from the Claude Code session (excerpt)**
+
+```text
+PostToolUse:Edit hook reported a problem
+
+[${CLAUDE_PROJECT_DIR}/.claude/hooks/check_leakage.sh]: Leakage tests failed after editing /Users/juliadial/Downloads/bikeshare-open/src/features.py:
+```
+
+```text
+FAILED tests/test_leakage.py::test_rolling_mean_excludes_today - assert ...
+1 failed, 7 passed in 1.14s
 ```
 
 **Agent repair:** In the verification rerun, the repair restored `.shift(1)` in one edit. The rolling mean again uses the seven calendar days before the prediction date. After the repair, the hook script exited with code 0.

@@ -203,6 +203,12 @@ The change is cosmetic. After restoring, `make test` showed 16 passed.
 **Command used:** cp /tmp/hook_blindspot_test.txt data/raw/hook_blindspot_test.txt
 
 **Observed result:** The copy succeeded. The copied file was verified using ls -l and showed a 36-byte file. No hook warning or automatic test output appeared after the Bash copy.
+**Verification rerun.** A separate reproduction in a clean checkout used a fresh test file. The output below is from `ls -l data/raw/hook_blindspot_test.txt` and `git status --short -- data/raw/hook_blindspot_test.txt`.
+
+```text
+-rw------- 1 agent agent 34 Nov 25 19:49 data/raw/hook_blindspot_test.txt
+?? data/raw/hook_blindspot_test.txt
+```
 
 **Why it was missed:** The PostToolUse hook did not detect this file operation performed through Bash cp.
 

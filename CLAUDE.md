@@ -1,3 +1,4 @@
+
 # Bikeshare demand capstone
 
 Daily Capital Bikeshare counts, 2011-2012. We forecast `cnt` (total daily
@@ -9,7 +10,9 @@ rides) from calendar, weather, and lagged-demand features.
 - `make train` - fit models, write `reports/metrics.json`
 - `make test` - pytest; run this before claiming anything works
 - `make all` - the three pipeline stages in order
+## Skills
 
+- Use `/record-seeded-fault <fault number or description>` to capture the seeded change, test output, hook output, and repair in `docs/SEEDED_FAULTS.md`.
 ## Non-negotiable rules
 - **Never** put `casual` or `registered` in a feature set:
   `casual + registered == cnt` exactly. `src/config.py` lists these and the

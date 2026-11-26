@@ -29,3 +29,21 @@ I consider this approach defensible as a hybrid model because the trend is estim
 ### Exercise 5: ridge vs persistence
 
 I would deploy the persistence baseline if the main goal is to minimize the average daily forecast error in rides. On the test set, ridge had the higher R² (0.5800 versus 0.5099), a gain of 0.0701. Persistence had the lower MAE (840.1 versus 946.2 rides), so its forecasts missed by 106.1 fewer rides per day on average. Since MAE directly measures how far the forecast is from the daily ride count, I would use yesterday’s count as the forecast.
+
+### Attribution
+
+My primary model was `bikeshare-coder` (`qwen3.5:4b`, 4.5B parameters) through local Ollama. I rebuilt it from a 32k to a 64k context window before the audit. I also tried hosted models, but those attempts did not produce a completed audit.
+
+**Agent contributions**
+
+- Claude Code seeded the `casual` feature-selection fault and the `.shift(1)` rolling-window fault in `src/features.py`. It also restored the `ValueError` for unknown weather labels during the third fault exercise.
+- ChatGPT helped draft the results table, verify the Exercise 4 scores, and check the seeded-fault and audit evidence.
+- Drafted the before-and-after results table in `REPORT.md` from the committed metrics and assembled the test-first evidence for `cnt_roll_3` in `docs/SEEDED_FAULTS.md`
+- The original pipeline, `new-feature` skill, hook, and auditor came from the course starter.
+  
+**My decisions**
+
+- I kept the starter’s forecast target, `cnt`, and its chronological split: 2011 for training, the first half of 2012 for validation, and the second half for testing.
+- I kept `casual` and `registered` out of the model because they sum to `cnt`, and I kept both the training-mean and persistence baselines.
+- I kept `cnt_roll_3` to document the experiment even though it lowered validation R² for both ridge and histogram gradient boosting.
+- I selected the training-only trend-plus-residual approach based on validation. For deployment, I favored persistence because it had the lower test MAE.
